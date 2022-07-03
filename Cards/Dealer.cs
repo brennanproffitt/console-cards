@@ -26,9 +26,9 @@ namespace Cards
             var cardToDeal = _deck.Cards.First();
             _deck.Cards.Remove(cardToDeal);
 
-            if(cardToDeal.FaceValue == FaceValue.Ace)
+            if(cardToDeal.FaceValue == FaceValue.Ace || collection.Cards.Any(p=>p.FaceValue == FaceValue.Ace))
             {
-                if(collection.TotalValue >= 12)
+                if(collection.TotalValue  >= 12)
                 {
                     cardToDeal.PointValue = 1;
                 }

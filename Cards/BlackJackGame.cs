@@ -45,14 +45,33 @@ namespace Cards
 
                 game.DisplayHandInfo();
                 Console.WriteLine("---------------");
+                
+                bool roundInProgress = true;
+
+                while(roundInProgress)
+                {
+                    Console.WriteLine("Would you like to hit or stay?");
+                    Console.WriteLine("0: Stay");
+                    Console.WriteLine("1: Hit!");
+
+                    var choice = Console.ReadLine();
+
+                    switch(choice)
+                    {
+                        
+                    }
+                }
             }
         }
 
         public void DisplayHandInfo()
         {
             Console.WriteLine("Dealer cards:");
-            DealerCards.Cards.ForEach(Console.WriteLine);
-            Console.WriteLine(DealerCards.TotalValue);
+            Console.WriteLine("?Hidden Card?");
+            foreach(var card in DealerCards.Cards.Skip(1))
+            {
+                Console.WriteLine(card);
+            }
 
             Console.WriteLine("---------------");
 

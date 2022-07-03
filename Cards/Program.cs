@@ -7,26 +7,36 @@ namespace Cards
     {
         static void Main(string[] args)
         {
-            Dealer dealer = new Dealer();
-            dealer.Deck.Shuffle();
+            bool showMenu = true;
+
+            while(showMenu)
+            {
+                showMenu = MainMenu();
+            }
+        }
+
+        private static bool MainMenu()
+        {
+            System.Threading.Thread.Sleep(1000);
+            Console.Clear();
 
             Console.WriteLine("Hello! What game would you like to play?");
-            Console.WriteLine($"0: Exit{Environment.NewLine}1: Blackjack");
+            Console.WriteLine($"1: Exit");
+            Console.WriteLine($"2: Blackjack");
 
-            int choice = int.Parse(Console.ReadLine());
+            bool success = int.TryParse(Console.ReadLine(), out int choice);
 
-            switch(choice)
+            switch (choice)
             {
-                case 0:
-                    Console.WriteLine("Goodbye...");
-                    Environment.Exit(0);
-                    break;
                 case 1:
+                    Console.WriteLine("Come back when you're ready to play! Goodbye...");
+                    return false;
+                case 2:
                     BlackJackGame.PlayBlackJack();
-                    break;
+                    return false;
                 default:
-                    Console.WriteLine("Invalid choice! Try again!");
-                    break;
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    return true;
             }
         }
     }
