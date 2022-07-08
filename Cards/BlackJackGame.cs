@@ -24,6 +24,15 @@ namespace Cards
             set { _dealerCards = value; }
         }
 
+        //private Dealer _dealer;
+
+        //public Dealer Dealer
+        //{
+        //    get { return _dealer; }
+        //    set { _dealer = value; }
+        //}
+
+
         public static void PlayBlackJack()
         {
             BlackJackGame game = new BlackJackGame();
@@ -58,26 +67,54 @@ namespace Cards
 
                     switch(choice)
                     {
-                        
+                        case "1":
+                            Hit();
+                            break;
+                        case "2":
+                            Stay();
+                            break;
+                        default:
+                            Console.WriteLine("Invalid choice, please try again.");
+                            break;
                     }
                 }
             }
         }
 
+        private static void Stay()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void Hit()
+        {
+             
+        }
+
         public void DisplayHandInfo()
         {
             Console.WriteLine("Dealer cards:");
+            Buffer();
             Console.WriteLine("?Hidden Card?");
-            foreach(var card in DealerCards.Cards.Skip(1))
+            Buffer();
+            foreach (var card in DealerCards.Cards.Skip(1))
             {
+                Buffer();
                 Console.WriteLine(card);
             }
 
             Console.WriteLine("---------------");
 
             Console.WriteLine("Your cards:");
+            Buffer();
+
             Player1Cards.Cards.ForEach(Console.WriteLine);
             Console.WriteLine(Player1Cards.TotalValue);
+        }
+
+        public void Buffer()
+        {
+            System.Threading.Thread.Sleep(500);
         }
 
         public bool CheckForGameOver()
