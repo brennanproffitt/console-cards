@@ -24,37 +24,35 @@ namespace Cards
             set { _dealerCards = value; }
         }
 
-        //private Dealer _dealer;
+        private static Dealer _dealer = new Dealer();
 
-        //public Dealer Dealer
-        //{
-        //    get { return _dealer; }
-        //    set { _dealer = value; }
-        //}
-
+        public static Dealer Dealer
+        {
+            get { return _dealer; }
+            set { _dealer = value; }
+        }
 
         public static void PlayBlackJack()
         {
             BlackJackGame game = new BlackJackGame();
-
-            Dealer dealer = new Dealer();
-            dealer.Deck.Shuffle();
+            
+            Dealer.Deck.Shuffle();
 
             bool playing = true;
 
             while(playing)
             {
-                Console.WriteLine("---------------");
+                game.Line();
 
                 for (int i = 1; i < 3; i++)
                 {
-                    dealer.DealOneCard(Player1Cards);
-                    dealer.DealOneCard(DealerCards);
+                    Dealer.DealOneCard(Player1Cards);
+                    Dealer.DealOneCard(DealerCards);
                 }
 
-                game.DisplayHandInfo();
-                Console.WriteLine("---------------");
-                
+                game.DisplayStartingHandInfo();
+                game.Line();
+
                 bool roundInProgress = true;
 
                 while(roundInProgress)
@@ -71,7 +69,7 @@ namespace Cards
                             Hit();
                             break;
                         case "2":
-                            Stay();
+                            Stand();
                             break;
                         default:
                             Console.WriteLine("Invalid choice, please try again.");
@@ -81,7 +79,7 @@ namespace Cards
             }
         }
 
-        private static void Stay()
+        private static void Stand()
         {
             throw new NotImplementedException();
         }
@@ -91,19 +89,16 @@ namespace Cards
              
         }
 
-        public void DisplayHandInfo()
+        public void DisplayStartingHandInfo()
         {
             Console.WriteLine("Dealer cards:");
             Buffer();
-            Console.WriteLine("?Hidden Card?");
+            Console.WriteLine(DealerCards.Cards.FirstOrDefault());
             Buffer();
-            foreach (var card in DealerCards.Cards.Skip(1))
-            {
-                Buffer();
-                Console.WriteLine(card);
-            }
+            Console.WriteLine("?Hidden Card?");
+            
 
-            Console.WriteLine("---------------");
+            Line();
 
             Console.WriteLine("Your cards:");
             Buffer();
@@ -115,6 +110,11 @@ namespace Cards
         public void Buffer()
         {
             System.Threading.Thread.Sleep(500);
+        }
+
+        public void Line()
+        {
+            Console.WriteLine("---------------");
         }
 
         public bool CheckForGameOver()
