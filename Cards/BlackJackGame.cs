@@ -8,75 +8,167 @@ namespace Cards
 {
     public class BlackJackGame
     {
-        private static CardCollection _player1Cards = new CardCollection();
+        private List<Card> _player1Cards;
 
-        public static CardCollection Player1Cards
+        private List<Card> _dealerCards;
+
+        private Deck _deck;
+
+        private int _player1Score;
+        private int _dealerScore;
+
+        public BlackJackGame()
         {
-            get { return _player1Cards; }
-            set { _player1Cards = value; }
+            _deck = new Deck();
+            _player1Cards = new List<Card>();
+            _dealerCards = new List<Card>();
+            _player1Score = 0;
+            _dealerScore = 0;
         }
 
-        private static CardCollection _dealerCards = new CardCollection();
-
-        public static CardCollection DealerCards
+        public void StartGame()
         {
-            get { return _dealerCards; }
-            set { _dealerCards = value; }
+            // shuffle the deck
+            ShuffleDeck();
+
+            // deal two cards to the player
+            DealCardToPlayer();
+            DealCardToPlayer();
+
+            // deal two cards to the dealer
+            DealCardToDealer();
+            DealCardToDealer();
+
+            // check initial scores
+            CheckScores();
+
+            // show details of game start to player
+            DisplayStartingHandInfo();
+
+            // player turn
+            PlayerTurn();
+
+            // dealer turn
+            DealerTurn();
+
+            // check winner
+            CheckWinner();
+
+            //BlackJackGame game = new BlackJackGame();
+
+            //Dealer.Deck.Shuffle();
+
+            //bool playing = true;
+
+            //while(playing)
+            //{
+            //    game.Line();
+
+            //    for (int i = 1; i < 3; i++)
+            //    {
+            //        Dealer.DealOneCard(Player1Cards);
+            //        Dealer.DealOneCard(DealerCards);
+            //    }
+
+            //    game.DisplayStartingHandInfo();
+            //    game.Line();
+
+            //    bool roundInProgress = true;
+
+            //    while(roundInProgress)
+            //    {
+            //        Console.WriteLine("Would you like to hit or stay?");
+            //        Console.WriteLine("0: Stay");
+            //        Console.WriteLine("1: Hit!");
+
+            //        var choice = Console.ReadLine();
+
+            //        switch(choice)
+            //        {
+            //            case "1":
+            //                Hit();
+            //                break;
+            //            case "2":
+            //                Stand();
+            //                break;
+            //            default:
+            //                Console.WriteLine("Invalid choice, please try again.");
+            //                break;
+            //        }
+            //    }
+            //}
         }
 
-        private static Dealer _dealer = new Dealer();
-
-        public static Dealer Dealer
+        private void ShuffleDeck()
         {
-            get { return _dealer; }
-            set { _dealer = value; }
+            _deck.Shuffle();
         }
-
-        public static void PlayBlackJack()
+        private void DealCardToPlayer()
         {
-            BlackJackGame game = new BlackJackGame();
-            
-            Dealer.Deck.Shuffle();
-
-            bool playing = true;
-
-            while(playing)
+            Card cardToDeal = _deck.Cards.First();
+            _deck.Cards.Remove(cardToDeal);
+            _player1Cards.Add(cardToDeal);
+        }
+        private void DealCardToDealer()
+        {
+            Card cardToDeal = _deck.Cards.First();
+            _deck.Cards.Remove(cardToDeal);
+            _dealerCards.Add(cardToDeal);
+        }
+        private void CheckScores()
+        {
+            foreach (var card in _player1Cards)
             {
-                game.Line();
-
-                for (int i = 1; i < 3; i++)
+                if (_player1Cards.Any(p => p.FaceValue == FaceValue.Ace))
                 {
-                    Dealer.DealOneCard(Player1Cards);
-                    Dealer.DealOneCard(DealerCards);
+                    OptimizeAceValues(_player1Cards);
                 }
-
-                game.DisplayStartingHandInfo();
-                game.Line();
-
-                bool roundInProgress = true;
-
-                while(roundInProgress)
-                {
-                    Console.WriteLine("Would you like to hit or stay?");
-                    Console.WriteLine("0: Stay");
-                    Console.WriteLine("1: Hit!");
-
-                    var choice = Console.ReadLine();
-
-                    switch(choice)
-                    {
-                        case "1":
-                            Hit();
-                            break;
-                        case "2":
-                            Stand();
-                            break;
-                        default:
-                            Console.WriteLine("Invalid choice, please try again.");
-                            break;
-                    }
-                }
+                _player1Score += card.PointValue;
             }
+
+            foreach (var card in _dealerCards)
+            {
+                if (_dealerCards.Any(p => p.FaceValue == FaceValue.Ace))
+                {
+                    OptimizeAceValues(_player1Cards);
+                }
+                _dealerScore += card.PointValue;
+            }
+        }
+        private void PlayerTurn()
+        {
+            if(_player1Score == 21)
+            {
+                Console.WriteLine("You have 21! Dealer's turn:");
+                return;
+            }
+
+            Console.WriteLine("Hit or Stand?");
+            Console.WriteLine("1: Stand");
+            Console.WriteLine("2: Hit!");
+
+            var choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    Stand();
+                    break;
+                case "2":
+                    Hit();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice, please try again.");
+                    break;
+            }
+        }
+        private void DealerTurn()
+        {
+            throw new NotImplementedException();
+        }
+        private void CheckWinner()
+        {
+            throw new NotImplementedException();
         }
 
         private static void Stand()
@@ -86,25 +178,25 @@ namespace Cards
 
         private static void Hit()
         {
-             
+            Console.WriteLine("Player chose to hit! (logic not implemented yet lol)");
         }
 
         public void DisplayStartingHandInfo()
         {
             Console.WriteLine("Dealer cards:");
             Buffer();
-            Console.WriteLine(DealerCards.Cards.FirstOrDefault());
+            Console.WriteLine(_dealerCards.FirstOrDefault());
             Buffer();
             Console.WriteLine("?Hidden Card?");
             
-
             Line();
 
             Console.WriteLine("Your cards:");
             Buffer();
 
-            Player1Cards.Cards.ForEach(Console.WriteLine);
-            Console.WriteLine(Player1Cards.TotalValue);
+            _player1Cards.ForEach(Console.WriteLine);
+            //display player's score for them here:
+            Console.WriteLine($"Player 1's score: {_player1Cards.Sum(c => c.PointValue)}");
         }
 
         public void Buffer()
@@ -117,16 +209,30 @@ namespace Cards
             Console.WriteLine("---------------");
         }
 
-        public bool CheckForGameOver()
+        private void OptimizeAceValues(List<Card> collection)
         {
-            bool over = false;
+            IEnumerable<Card> aces = collection.Where(c => c.FaceValue == FaceValue.Ace);
 
-            if(Player1Cards.TotalValue >= 21 || DealerCards.TotalValue >= 21)
+            int totalValueWithoutAces = collection.Where(c => c.FaceValue != FaceValue.Ace).Sum(c => c.PointValue);
+
+            if (totalValueWithoutAces >= 12 && totalValueWithoutAces < 21)
             {
-                over = true;
+                foreach (Card ace in aces)
+                {
+                    ace.PointValue = 1;
+                }
             }
-
-            return over;
+            else if (aces.Count() == 1 && totalValueWithoutAces <= 11)
+            {
+                aces.FirstOrDefault().PointValue = 11;
+            }
+            else
+            {
+                foreach (Card ace in aces)
+                {
+                    ace.PointValue = 11;
+                }
+            }
         }
     }
 }

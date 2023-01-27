@@ -41,7 +41,7 @@ namespace Cards
             }
         }
 
-        private int GetCardValue(FaceValue faceValue)
+        private static int GetCardValue(FaceValue faceValue)
         {
             switch (faceValue)
             {
@@ -64,11 +64,8 @@ namespace Cards
                 case FaceValue.Nine:
                     return 9;
                 case FaceValue.Ten:
-                    return 10;
                 case FaceValue.Jack:
-                    return 10;
                 case FaceValue.Queen:
-                    return 10;
                 case FaceValue.King:
                     return 10;
                 default:

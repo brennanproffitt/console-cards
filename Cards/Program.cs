@@ -32,7 +32,8 @@ namespace Cards
                     Console.WriteLine("Come back when you're ready to play! Goodbye...");
                     return false;
                 case 2:
-                    BlackJackGame.PlayBlackJack();
+                    BlackJackGame bjg = new BlackJackGame();
+                    bjg.StartGame();
                     return false;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
