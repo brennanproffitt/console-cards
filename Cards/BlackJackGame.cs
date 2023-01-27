@@ -149,18 +149,21 @@ namespace Cards
 
             var choice = Console.ReadLine();
 
-            switch (choice)
+            do
             {
-                case "1":
-                    Stand();
-                    break;
-                case "2":
-                    Hit();
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice, please try again.");
-                    break;
-            }
+                switch (choice)
+                {
+                    case "1":
+                        Stand();
+                        break;
+                    case "2":
+                        Hit();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice, please try again.");
+                        break;
+                }
+            } while (choice != "1");
         }
         private void DealerTurn()
         {
