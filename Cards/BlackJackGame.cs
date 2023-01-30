@@ -272,6 +272,13 @@ namespace Cards
             {
                 aces.FirstOrDefault().PointValue = 11;
             }
+            else if (totalValueWithoutAces >= 21)
+            {
+                foreach (Card ace in aces)
+                {
+                    ace.PointValue = 1;
+                }
+            }
             else
             {
                 foreach (Card ace in aces)
