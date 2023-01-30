@@ -179,6 +179,9 @@ namespace Cards
         }
         private void CheckWinner()
         {
+            Buffer();
+            Line();
+
             CheckScores();
 
             if (_player1Score > 21)
