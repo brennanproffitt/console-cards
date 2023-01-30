@@ -9,7 +9,7 @@ namespace Cards
         {
             bool showMenu = true;
 
-            while(showMenu)
+            while (showMenu)
             {
                 showMenu = MainMenu();
             }
@@ -24,7 +24,7 @@ namespace Cards
             Console.WriteLine($"1: Exit");
             Console.WriteLine($"2: Blackjack");
 
-            bool success = int.TryParse(Console.ReadLine(), out int choice);
+            int.TryParse(Console.ReadLine(), out int choice);
 
             switch (choice)
             {
@@ -32,12 +32,32 @@ namespace Cards
                     Console.WriteLine("Come back when you're ready to play! Goodbye...");
                     return false;
                 case 2:
-                    BlackJackGame bjg = new BlackJackGame();
-                    bjg.StartGame();
+                    bool playingBlackJack = true;
+                    while (playingBlackJack)
+                        playingBlackJack = PlayBlackJack();
                     return false;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     return true;
+            }
+        }
+
+        private static bool PlayBlackJack()
+        {
+            BlackJackGame bjg = new BlackJackGame();
+            bjg.StartGame();
+            Console.WriteLine($"Would you like to play again?\n1: Yes\n2: No, thanks.");
+            int.TryParse(Console.ReadLine(), out int userChoiceForPlayAgain);
+            switch (userChoiceForPlayAgain)
+            {
+                case 1:
+                    return true;
+                case 2:
+                    Console.WriteLine("Understood. Thanks for playing!");
+                    return false;
+                default:
+                    Console.WriteLine("Invalid choice. Returning to main menu.");
+                    return false;
             }
         }
     }

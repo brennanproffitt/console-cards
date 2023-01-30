@@ -28,30 +28,23 @@ namespace Cards
 
         public void StartGame()
         {
-            // shuffle the deck
             ShuffleDeck();
 
-            // deal two cards to the player
             DealCardToPlayer();
             DealCardToPlayer();
 
-            // deal two cards to the dealer
             DealCardToDealer();
             DealCardToDealer();
 
-            // check initial scores
             CheckScores();
 
             // show details of game start to player
             DisplayStartingHandInfo();
 
-            // player turn
             PlayerTurn();
 
-            // dealer turn
             DealerTurn();
 
-            // check winner
             CheckWinner();
         }
 
@@ -158,6 +151,11 @@ namespace Cards
                     CheckScores();
                     Console.WriteLine($"Dealer's new score: {_dealerScore}");
                 }
+                if(_dealerScore == 17)
+                {
+                    Console.WriteLine("Dealer has 17 even, with no aces. The dealer must stand.");
+                    return;
+                }
             } while (_dealerScore <= 17);
 
             if (_dealerScore > 17)
@@ -170,32 +168,29 @@ namespace Cards
         {
             CheckScores();
 
-            if (_dealerScore > 21)
-            {
-                Console.WriteLine($"Dealer busted! Score {_dealerScore}.");
-                Buffer();
-            }
             if (_player1Score > 21)
             {
-                Console.WriteLine($"Player 1 busted! Score {_player1Score}.");
-                Buffer();
+                Console.WriteLine("Dealer wins! Player 1 busts with a total of " + _player1Score);
             }
-            if (_player1Score <= 21 && _dealerScore <= 21)
+            else if (_dealerScore > 21)
             {
-                if (_player1Score == _dealerScore)
-                {
-                    Console.WriteLine($"Push! Dealer and Player 1 tied with a score of {_dealerScore}.");
-                    Buffer();
-                }
-                if (_player1Score > _dealerScore)
-                {
-                    Console.WriteLine($"Player 1 won the hand! Player 1 had {_player1Score} while the dealer had {_dealerScore}.");
-                }
-                if (_dealerScore > _player1Score)
-                {
-                    Console.WriteLine($"Dealer won the hand. Player 1 had {_player1Score} while the dealer had {_dealerScore}.");
-                }
+                Console.WriteLine("Player 1 wins! Dealer busts with a total of " + _dealerScore);
             }
+            else if (_dealerScore > _player1Score)
+            {
+                Console.WriteLine("Dealer wins with a total of " + _dealerScore + " compared to the player 1's total of " + _player1Score);
+            }
+            else if (_player1Score > _dealerScore)
+            {
+                Console.WriteLine("Player 1 wins with a total of " + _player1Score + " compared to the dealer's total of " + _dealerScore);
+            }
+            else
+            {
+                Console.WriteLine("Push! Both player 1 and dealer have a total of " + _player1Score);
+            }
+
+            Buffer();
+            Line();
         }
 
         private void Stand()
@@ -224,6 +219,7 @@ namespace Cards
 
         public void DisplayStartingHandInfo()
         {
+            Line();
             Console.WriteLine("Dealer cards:");
             Buffer();
             Console.WriteLine(_dealerCards.FirstOrDefault());
@@ -233,6 +229,8 @@ namespace Cards
             Line();
 
             DisplayPlayerCards();
+            Buffer();
+            Line();
         }
 
         public void DisplayPlayerCards()
