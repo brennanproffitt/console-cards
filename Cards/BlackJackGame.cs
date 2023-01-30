@@ -109,9 +109,9 @@ namespace Cards
             } while (choice != "1" && _player1Score < 21);
 
             if (_player1Score == 21)
-                Console.WriteLine("Blackjack!");
+                Console.WriteLine("Player 1 Blackjack!");
             if (_player1Score > 21)
-                Console.WriteLine("Bust!");
+                Console.WriteLine("PLayer 1 Bust!");
         }
 
         private static void PromptPlayerForAction()
@@ -159,9 +159,21 @@ namespace Cards
                 }
             } while (_dealerScore <= 17);
 
-            if (_dealerScore > 17)
+            if (_dealerScore > 17 && _dealerScore < 21)
             {
                 Console.WriteLine($"Dealer's score ({_dealerScore}) is greater than 17, and the dealer must stand.");
+                return;
+            }
+
+            if(_dealerScore > 21)
+            {
+                Console.WriteLine($"Dealer bust! Dealer total score is {_dealerScore}");
+                return;
+            }
+
+            if(_dealerScore == 21)
+            {
+                Console.WriteLine("Dealer Blackjack!");
                 return;
             }
         }
@@ -214,7 +226,7 @@ namespace Cards
             Buffer();
             Line();
 
-            if (_player1Score <= 21)
+            if (_player1Score < 21)
                 PromptPlayerForAction();
         }
 
