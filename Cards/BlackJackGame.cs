@@ -53,50 +53,6 @@ namespace Cards
 
             // check winner
             CheckWinner();
-
-            //BlackJackGame game = new BlackJackGame();
-
-            //Dealer.Deck.Shuffle();
-
-            //bool playing = true;
-
-            //while(playing)
-            //{
-            //    game.Line();
-
-            //    for (int i = 1; i < 3; i++)
-            //    {
-            //        Dealer.DealOneCard(Player1Cards);
-            //        Dealer.DealOneCard(DealerCards);
-            //    }
-
-            //    game.DisplayStartingHandInfo();
-            //    game.Line();
-
-            //    bool roundInProgress = true;
-
-            //    while(roundInProgress)
-            //    {
-            //        Console.WriteLine("Would you like to hit or stay?");
-            //        Console.WriteLine("0: Stay");
-            //        Console.WriteLine("1: Hit!");
-
-            //        var choice = Console.ReadLine();
-
-            //        switch(choice)
-            //        {
-            //            case "1":
-            //                Hit();
-            //                break;
-            //            case "2":
-            //                Stand();
-            //                break;
-            //            default:
-            //                Console.WriteLine("Invalid choice, please try again.");
-            //                break;
-            //        }
-            //    }
-            //}
         }
 
         private void ShuffleDeck()
@@ -117,45 +73,38 @@ namespace Cards
         }
         private void CheckScores()
         {
-            foreach (var card in _player1Cards)
+            if (_player1Cards.Any(p => p.FaceValue == FaceValue.Ace))
             {
-                if (_player1Cards.Any(p => p.FaceValue == FaceValue.Ace))
-                {
-                    OptimizeAceValues(_player1Cards);
-                }
-                _player1Score += card.PointValue;
+                OptimizeAceValues(_player1Cards);
             }
+            _player1Score = _player1Cards.Sum(c => c.PointValue);
 
-            foreach (var card in _dealerCards)
+            if (_dealerCards.Any(p => p.FaceValue == FaceValue.Ace))
             {
-                if (_dealerCards.Any(p => p.FaceValue == FaceValue.Ace))
-                {
-                    OptimizeAceValues(_player1Cards);
-                }
-                _dealerScore += card.PointValue;
+                OptimizeAceValues(_dealerCards);
             }
+            _dealerScore = _dealerCards.Sum(c => c.PointValue);
         }
         private void PlayerTurn()
         {
-            if(_player1Score == 21)
+            if (_player1Score == 21)
             {
                 Console.WriteLine("You have 21! Dealer's turn:");
                 return;
             }
 
-            Console.WriteLine("Hit or Stand?");
-            Console.WriteLine("1: Stand");
-            Console.WriteLine("2: Hit!");
+            PromptPlayerForAction();
 
-            var choice = Console.ReadLine();
+            string choice;
 
             do
             {
+                choice = Console.ReadLine();
                 switch (choice)
                 {
                     case "1":
                         Stand();
-                        break;
+                        return;
                     case "2":
                         Hit();
                         break;
@@ -163,25 +112,114 @@ namespace Cards
                         Console.WriteLine("Invalid choice, please try again.");
                         break;
                 }
-            } while (choice != "1");
+            } while (choice != "1" && _player1Score < 21);
+
+            if (_player1Score == 21)
+                Console.WriteLine("Blackjack!");
+            if (_player1Score > 21)
+                Console.WriteLine("Bust!");
         }
+
+        private static void PromptPlayerForAction()
+        {
+            Console.WriteLine("Hit or Stand?");
+            Console.WriteLine("1: Stand");
+            Console.WriteLine("2: Hit!");
+        }
+
         private void DealerTurn()
         {
-            throw new NotImplementedException();
+            Line();
+            Console.WriteLine("Dealer Cards:");
+            _dealerCards.ForEach(Console.WriteLine);
+
+            Buffer();
+            CheckScores();
+            Console.WriteLine($"Dealer's score: {_dealerScore}");
+
+            do
+            {
+                if (_dealerScore < 17)
+                {
+                    DealCardToDealer();
+                    Buffer();
+                    Console.WriteLine($"Dealer received {_dealerCards.Last()}");
+                    Buffer();
+                    CheckScores();
+                    Console.WriteLine($"Dealer's new score: {_dealerScore}");
+                }
+                if (_dealerScore == 17 && _dealerCards.Any(p => p.FaceValue == FaceValue.Ace))
+                {
+                    Console.WriteLine($"Dealer has a soft 17 (score of {_dealerScore} and an ace in the hand) and must hit.");
+                    DealCardToDealer();
+                    Buffer();
+                    Console.WriteLine($"Dealer received {_dealerCards.Last()}");
+                    Buffer();
+                    CheckScores();
+                    Console.WriteLine($"Dealer's new score: {_dealerScore}");
+                }
+            } while (_dealerScore <= 17);
+
+            if (_dealerScore > 17)
+            {
+                Console.WriteLine($"Dealer's score ({_dealerScore}) is greater than 17, and the dealer must stand.");
+                return;
+            }
         }
         private void CheckWinner()
         {
-            throw new NotImplementedException();
+            CheckScores();
+
+            if (_dealerScore > 21)
+            {
+                Console.WriteLine($"Dealer busted! Score {_dealerScore}.");
+                Buffer();
+            }
+            if (_player1Score > 21)
+            {
+                Console.WriteLine($"Player 1 busted! Score {_player1Score}.");
+                Buffer();
+            }
+            if (_player1Score <= 21 && _dealerScore <= 21)
+            {
+                if (_player1Score == _dealerScore)
+                {
+                    Console.WriteLine($"Push! Dealer and Player 1 tied with a score of {_dealerScore}.");
+                    Buffer();
+                }
+                if (_player1Score > _dealerScore)
+                {
+                    Console.WriteLine($"Player 1 won the hand! Player 1 had {_player1Score} while the dealer had {_dealerScore}.");
+                }
+                if (_dealerScore > _player1Score)
+                {
+                    Console.WriteLine($"Dealer won the hand. Player 1 had {_player1Score} while the dealer had {_dealerScore}.");
+                }
+            }
         }
 
-        private static void Stand()
+        private void Stand()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Player chose to stand. Dealer's turn.");
+            CheckScores();
         }
 
-        private static void Hit()
+        private void Hit()
         {
-            Console.WriteLine("Player chose to hit! (logic not implemented yet lol)");
+            Console.WriteLine("Player chose to hit! Dealing card...");
+            Buffer();
+            DealCardToPlayer();
+
+            Buffer();
+            Line();
+
+            DisplayPlayerCards();
+
+            Buffer();
+            Line();
+
+            if (_player1Score <= 21)
+                PromptPlayerForAction();
         }
 
         public void DisplayStartingHandInfo()
@@ -191,15 +229,20 @@ namespace Cards
             Console.WriteLine(_dealerCards.FirstOrDefault());
             Buffer();
             Console.WriteLine("?Hidden Card?");
-            
+
             Line();
 
-            Console.WriteLine("Your cards:");
-            Buffer();
+            DisplayPlayerCards();
+        }
 
+        public void DisplayPlayerCards()
+        {
+            Console.WriteLine("Player 1 Cards:");
+            Buffer();
             _player1Cards.ForEach(Console.WriteLine);
             //display player's score for them here:
-            Console.WriteLine($"Player 1's score: {_player1Cards.Sum(c => c.PointValue)}");
+            CheckScores();
+            Console.WriteLine($"Player 1's score: {_player1Score}");
         }
 
         public void Buffer()
@@ -209,7 +252,9 @@ namespace Cards
 
         public void Line()
         {
+            Console.WriteLine("");
             Console.WriteLine("---------------");
+            Console.WriteLine("");
         }
 
         private void OptimizeAceValues(List<Card> collection)
