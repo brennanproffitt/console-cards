@@ -43,7 +43,8 @@ namespace Cards
 
             PlayerTurn();
 
-            DealerTurn();
+            if (_player1Score <= 21)
+                DealerTurn();
 
             CheckWinner();
         }
@@ -151,7 +152,7 @@ namespace Cards
                     CheckScores();
                     Console.WriteLine($"Dealer's new score: {_dealerScore}");
                 }
-                if(_dealerScore == 17)
+                if (_dealerScore == 17)
                 {
                     Console.WriteLine("Dealer has 17 even, with no aces. The dealer must stand.");
                     return;
