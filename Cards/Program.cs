@@ -35,7 +35,7 @@ namespace Cards
                     bool playingBlackJack = true;
                     while (playingBlackJack)
                         playingBlackJack = PlayBlackJack();
-                    return false;
+                    return true;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     return true;
@@ -47,18 +47,23 @@ namespace Cards
             BlackJackGame bjg = new BlackJackGame();
             bjg.StartGame();
             Console.WriteLine($"Would you like to play again?\n1: Yes\n2: No, thanks.");
-            int.TryParse(Console.ReadLine(), out int userChoiceForPlayAgain);
-            switch (userChoiceForPlayAgain)
+            string userChoiceForPlayAgain;
+            do
             {
-                case 1:
-                    return true;
-                case 2:
-                    Console.WriteLine("Understood. Thanks for playing!");
-                    return false;
-                default:
-                    Console.WriteLine("Invalid choice. Returning to main menu.");
-                    return false;
-            }
+                userChoiceForPlayAgain = Console.ReadLine().Trim();
+                switch (userChoiceForPlayAgain)
+                {
+                    case "1":
+                        return true;
+                    case "2":
+                        Console.WriteLine("Understood. Thanks for playing!");
+                        return false;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+            } while (userChoiceForPlayAgain != "1" || userChoiceForPlayAgain != "2");
+            return false;
         }
     }
 }
