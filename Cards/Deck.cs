@@ -83,9 +83,9 @@ namespace Cards
             {
                 totalCardsToShuffle--;
                 int newPosition = rng.Next(totalCardsToShuffle + 1);
-                Card value = cards[newPosition];
+                Card cardInNewPosition = cards[newPosition];
                 cards[newPosition] = cards[totalCardsToShuffle];
-                cards[totalCardsToShuffle] = value;
+                cards[totalCardsToShuffle] = cardInNewPosition;
             }
         }
     }
