@@ -42,7 +42,7 @@ namespace Cards
 
                 Card value = cards[newPosition];
                 cards[newPosition] = cards[totalCardsToShuffle];
-                cards[totalCardsToShuffle] = value;
+                cards[totalCardsToShuffle] = cardInNewPosition;
             }
 
             _cards = new Stack<Card>(cards);
