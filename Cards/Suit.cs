@@ -5,6 +5,7 @@
         Clubs,
         Diamonds,
         Hearts,
-        Spades
+        Spades,
+        Wild,
     }
 }

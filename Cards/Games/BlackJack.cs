@@ -10,7 +10,7 @@ namespace Cards.Games
     const int ACE_MAX_VALUE = 11;
     const int MAX_VALID_SCORE = 21;
 
-    private readonly Deck _deck = Deck.Without(FaceValue.Joker);
+    private readonly Deck _deck = new DeckBuilder().Without(Suit.Wild).Without(FaceValue.Joker).Create(6);
 
     private List<IPlayer> Players = new()
     {
@@ -70,7 +70,6 @@ namespace Cards.Games
     {
       var score = player.Cards.Excluding(FaceValue.Ace).Sum(GetCardValue);
 
-      // TODO: Improve. If player has multiple aces, this may force them over
       foreach (var ace in player.Cards.Exclusively(FaceValue.Ace))
       {
         score += score + ACE_MAX_VALUE <= MAX_VALID_SCORE

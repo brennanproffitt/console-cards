@@ -18,22 +18,8 @@ namespace Cards
             if (!cards.Any()) throw new ArgumentException("Cards must have at least 1 card", nameof(cards));
 
             _cards = new Stack<Card>(cards);
-        }
 
-
-
-        public static Deck Without(params FaceValue[] values)
-        {
-            if (values is null) throw new ArgumentNullException(nameof(values));
-            if (values.Length == 0) throw new ArgumentException($"'{nameof(values)}' must have one or more items.", nameof(values));
-
-
-            var suits = Enum.GetValues<Suit>();
-            var faceValues = Enum.GetValues<FaceValue>().Where(faceValue => !values.Contains(faceValue));
-
-            var cards = suits.SelectMany(suit => faceValues.Select(faceValue => new Card(faceValue, suit)));
-
-            return new Deck(cards);
+            Console.WriteLine(cards.Count());
         }
 
 
