@@ -8,85 +8,64 @@ namespace Cards
 {
     public class Deck
     {
-        private List<Card> _cards = new List<Card>();
+        private readonly Random RNG = new();
+        private Stack<Card> _cards;
 
-        public List<Card> Cards
+
+        public Deck(IEnumerable<Card> cards)
         {
-            get { return _cards; }
-            set { _cards = value; }
+            if (cards == null) throw new ArgumentNullException(nameof(cards));
+            if (!cards.Any()) throw new ArgumentException("Cards must have at least 1 card", nameof(cards));
+
+            _cards = new Stack<Card>(cards);
         }
 
-        public Deck()
+
+
+        public static Deck Without(params FaceValue[] values)
         {
-            Initialize();
+            if (values is null) throw new ArgumentNullException(nameof(values));
+            if (values.Length == 0) throw new ArgumentException($"'{nameof(values)}' must have one or more items.", nameof(values));
+
+
+            var suits = Enum.GetValues<Suit>();
+            var faceValues = Enum.GetValues<FaceValue>().Where(faceValue => !values.Contains(faceValue));
+
+            var cards = suits.SelectMany(suit => faceValues.Select(faceValue => new Card(faceValue, suit)));
+
+            return new Deck(cards);
         }
+
 
         public override string ToString()
         {
             return string.Join(Environment.NewLine, _cards);
         }
 
-        private void Initialize()
-        {
-            _cards.Clear();
-            int numberValue;
-            foreach(Suit suit in Enum.GetValues(typeof(Suit)))
-            {
-                foreach(FaceValue faceValue in Enum.GetValues(typeof(FaceValue)))
-                {
-                    numberValue = GetCardValue(faceValue);
-                    Card newCard = new Card(faceValue, suit, numberValue);
-                    _cards.Add(newCard);
-                }
-            }
-        }
-
-        private static int GetCardValue(FaceValue faceValue)
-        {
-            switch (faceValue)
-            {
-                case FaceValue.Ace:
-                    return 0;
-                case FaceValue.Two:
-                    return 2;
-                case FaceValue.Three:
-                    return  3;
-                case FaceValue.Four:
-                    return 4;
-                case FaceValue.Five:
-                    return 5;
-                case FaceValue.Six:
-                    return 6;
-                case FaceValue.Seven:
-                    return 7;
-                case FaceValue.Eight:
-                    return 8;
-                case FaceValue.Nine:
-                    return 9;
-                case FaceValue.Ten:
-                case FaceValue.Jack:
-                case FaceValue.Queen:
-                case FaceValue.King:
-                    return 10;
-                default:
-                    return 0;
-            }
-        }
 
         public void Shuffle()
         {
-            var cards = Cards;
-            var rng = new Random();
+            int totalCardsToShuffle = _cards.Count;
 
-            int totalCardsToShuffle = cards.Count;
-            while(totalCardsToShuffle > 1)
+            var cards = _cards.ToList();
+
+            while (totalCardsToShuffle > 1)
             {
                 totalCardsToShuffle--;
-                int newPosition = rng.Next(totalCardsToShuffle + 1);
+                int newPosition = RNG.Next(totalCardsToShuffle + 1);
+
                 Card value = cards[newPosition];
                 cards[newPosition] = cards[totalCardsToShuffle];
                 cards[totalCardsToShuffle] = value;
             }
+
+            _cards = new Stack<Card>(cards);
+        }
+
+
+        public Card Draw()
+        {
+            return _cards.Pop();
         }
     }
 }
