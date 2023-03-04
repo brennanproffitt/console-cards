@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Cards
         private readonly Random RNG = new();
         private Stack<Card> _cards;
 
+        public ReadOnlyCollection<Card> Cards => _cards.ToList().AsReadOnly();
 
         public Deck(IEnumerable<Card> cards)
         {
@@ -42,7 +44,7 @@ namespace Cards
 
                 Card value = cards[newPosition];
                 cards[newPosition] = cards[totalCardsToShuffle];
-                cards[totalCardsToShuffle] = cardInNewPosition;
+                cards[totalCardsToShuffle] = value;
             }
 
             _cards = new Stack<Card>(cards);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cards.Extensions;
 
 namespace Cards.Games
 {
@@ -10,7 +11,7 @@ namespace Cards.Games
     const int ACE_MAX_VALUE = 11;
     const int MAX_VALID_SCORE = 21;
 
-    private readonly Deck _deck = new DeckBuilder().Without(Suit.Wild).Without(FaceValue.Joker).Create(6);
+    private readonly Deck _deck = DeckBuilder.FromStandardDeck().Create(6);
 
     private List<IPlayer> Players = new()
     {

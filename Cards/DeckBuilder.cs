@@ -1,62 +1,121 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cards.Extensions;
 
 namespace Cards;
 
 public class DeckBuilder
 {
-
-  private HashSet<Suit> excludedSuits = null;
-  private HashSet<FaceValue> excludedFaceValues = null;
+  private List<Func<IEnumerable<Card>>> factories = new();
 
 
-  public DeckBuilder Without(params Suit[] suits)
+  public static DeckBuilder FromBuilder(DeckBuilder deckBuilder)
+  {
+    return new DeckBuilder()
+    {
+      factories = deckBuilder.factories
+    };
+  }
+
+
+  public static DeckBuilder FromStandardDeck()
+  {
+    var suits = Enum.GetValues<Suit>().Excluding(Suit.Wild).ToHashSet();
+    var faceValues = Enum.GetValues<FaceValue>().Excluding(FaceValue.Joker).ToHashSet();
+
+    return new DeckBuilder().With(faceValues, suits);
+  }
+
+
+  public DeckBuilder With(int numberToCreate, FaceValue faceValue, Suit suit)
+  {
+    if (numberToCreate < 1) throw new ArgumentException("Value must be greater than 0");
+
+    var factory = CreateCardFactory(numberToCreate, faceValue, suit);
+    factories.Add(factory);
+
+    return this;
+  }
+
+
+  public DeckBuilder With(FaceValue faceValue, params Suit[] suits)
   {
     if (suits is null) throw new ArgumentNullException(nameof(suits));
-    if (suits.Length == 0) throw new ArgumentException($"'{nameof(suits)}' must have one or more items.", nameof(suits));
-    if (excludedSuits is not null) throw new InvalidOperationException($"'{nameof(DeckBuilder.Without)}' should only be called a max of 1 time for suits.");
+    if (!suits.Any()) throw new ArgumentException("Must have 1 or more suits", nameof(suits));
 
-    excludedSuits = new(suits);
+    var factory = CreateCardFactory(faceValue, suits);
+    factories.Add(factory);
+
     return this;
   }
 
 
-  public DeckBuilder Without(params FaceValue[] faceValues)
+  public DeckBuilder With(HashSet<FaceValue> faceValues, HashSet<Suit> suits)
   {
     if (faceValues is null) throw new ArgumentNullException(nameof(faceValues));
-    if (faceValues.Length == 0) throw new ArgumentException($"'{nameof(faceValues)}' must have one or more items.", nameof(faceValues));
-    if (excludedFaceValues is not null) throw new InvalidOperationException($"'{nameof(DeckBuilder.Without)}' should only be called a max of 1 time for suits.");
+    if (!faceValues.Any()) throw new ArgumentException("Must have at least 1 face value", nameof(faceValues));
 
-    excludedFaceValues = new(faceValues);
+    if (suits is null) throw new ArgumentNullException(nameof(suits));
+    if (!suits.Any()) throw new ArgumentException("Must have at least 1 suit", nameof(suits));
+
+    factories.Add(CreateCardFactory(faceValues, suits));
+
     return this;
   }
 
 
-  public Deck Create(int numberToCreate = 1)
+  public DeckBuilder Reset()
   {
-    if (numberToCreate <= 0) throw new ArgumentException("Cannot create less than 1 deck.", nameof(numberToCreate));
+    factories.Clear();
+    return this;
+  }
 
-    var suits = Enum.GetValues<Suit>().Where(suit => !excludedSuits.Contains(suit));
-    var faceValues = Enum.GetValues<FaceValue>().Where(faceValue => !excludedFaceValues.Contains(faceValue));
 
-    var cards = new List<Card>();
+  public Deck Create(int numberToCreate = 1, bool reset = true)
+  {
+    List<Card> cards = new();
 
     for (int i = 0; i < numberToCreate; i++)
     {
-      foreach (var suit in suits)
+      foreach (var factory in factories)
       {
-        foreach (var faceValue in faceValues)
-        {
-          if (Card.TryCreate(faceValue, suit, out Card card))
-          {
-            cards.Add(card);
-          }
-        }
+        cards.AddRange(factory());
       }
     }
 
-    Console.WriteLine(cards.Count);
+    if (reset)
+    {
+      Reset();
+    }
+
     return new Deck(cards);
+  }
+
+
+
+  private Func<IEnumerable<Card>> CreateCardFactory(int numberToCreate, FaceValue faceValue, Suit suit)
+  {
+    return () =>
+    {
+      List<Card> cards = new();
+      for (int i = 0; i < numberToCreate; i++)
+      {
+        cards.Add(new Card(faceValue, suit));
+      }
+      return cards;
+    };
+  }
+
+
+  private Func<IEnumerable<Card>> CreateCardFactory(HashSet<FaceValue> faceValues, HashSet<Suit> suits)
+  {
+    return () => suits.SelectMany(suit => faceValues.Select(faceValue => new Card(faceValue, suit)));
+  }
+
+
+  private Func<IEnumerable<Card>> CreateCardFactory(FaceValue faceValue, params Suit[] suits)
+  {
+    return () => suits.Select(suit => new Card(faceValue, suit));
   }
 }

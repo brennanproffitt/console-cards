@@ -23,6 +23,10 @@ namespace Cards
     {
       Console.CancelKeyPress += OnCancelKeyPressed;
 
+      var array = new int[5];
+      var selected = array.Select(i => { Console.WriteLine("Selected"); return i; });
+
+
       Greet();
 
       var game = GetPlayerChoice();
