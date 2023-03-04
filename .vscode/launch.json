@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/Cards/bin/Debug/netcoreapp6.0/Cards.dll",
+      "program": "${workspaceFolder}/Cards/bin/Debug/netcoreapp7.0/Cards.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Cards",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
