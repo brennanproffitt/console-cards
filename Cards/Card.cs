@@ -43,9 +43,9 @@ namespace Cards
         Eight,
         Nine,
         Ten,
-        Jack,
-        Queen,
-        King
+        J,
+        Q,
+        K
     }
 
     public enum Suit

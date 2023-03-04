@@ -64,9 +64,9 @@ namespace Cards
                 case FaceValue.Nine:
                     return 9;
                 case FaceValue.Ten:
-                case FaceValue.Jack:
-                case FaceValue.Queen:
-                case FaceValue.King:
+                case FaceValue.J:
+                case FaceValue.Q:
+                case FaceValue.K:
                     return 10;
                 default:
                     return 0;
